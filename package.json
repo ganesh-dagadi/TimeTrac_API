@@ -1,0 +1,26 @@
+{
+  "name": "uptime-api",
+  "version": "1.0.0",
+  "description": "The backend API for the Apps of Uptime",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ganesh-dagadi/Uptime-API.git"
+  },
+  "author": "Uptime backend team",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ganesh-dagadi/Uptime-API/issues"
+  },
+  "homepage": "https://github.com/ganesh-dagadi/Uptime-API#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^14.0.1",
+    "express": "^4.17.2",
+    "mongoose": "^6.1.6"
+  }
+}
