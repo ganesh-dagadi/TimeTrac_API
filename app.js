@@ -16,7 +16,8 @@ app.use(urlencoded({extended : false}));
 
 const authRoutes = require('./routes/auth');
 app.use('/api/auth' , authRoutes);
-
+const projectRoutes = require('./routes/project');
+app.use('/api/projects' , projectRoutes)
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, ()=>{
