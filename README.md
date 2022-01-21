@@ -16,4 +16,4 @@ API endpoints are located in the routes folder. Each route has a controller whic
 Middleware folder contains middlewares that need to be accessible from all the routes. 
 
 ## API documentation
-[Link text Here](https://documenter.getpostman.com/view/19193041/UVXomtgq)
+[API docs](https://documenter.getpostman.com/view/19193041/UVXomtgq)
