@@ -10,7 +10,11 @@ const app = express()
 
 mongoose.connect(process.env.MONGO_URI)
 
-app.use(cors())
+app.use(cors(
+    {
+        origin : 'http://time-trac.vercel.app'
+    }
+))
 app.use(json())
 app.use(urlencoded({extended : false}));
 
