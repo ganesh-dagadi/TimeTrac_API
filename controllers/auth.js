@@ -52,6 +52,7 @@ module.exports.loginUser = async function(req , res , next){
 
 module.exports.newToken = async function(req , res , next){
     let tokenHeader = req.headers.authorization;
+    if(!tokenHeader) return res.status(400).json({error : "please include refreshToken in request header"})
     let token;
     if(tokenHeader.startsWith("Bearer ")){
         token = tokenHeader.substring(7 , tokenHeader.length)
