@@ -13,7 +13,8 @@ mongoose.connect(process.env.MONGO_URI)
 
 app.use(cors(
     {
-        origin : 'http://time-trac.vercel.app'
+        origin : 'https://time-trac.vercel.app',
+        methods : ['GET' , 'POST' , 'PUT' , 'DELETE']
     }
 ))
 app.use(json())
