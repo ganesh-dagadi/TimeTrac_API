@@ -14,7 +14,6 @@ module.exports.validateRegisterUser = async function(req , res , next){
 
 module.exports.validateLoginUser = async function(req , res , next){
     const {username , password , email} = req.body;
-    console.log(req.body)
     if(!(username || email) || !password) return res.status(403).json({error : "Username/email or password missing"})
     try{
         const user = await User.find({$or : [{username : username} , {email : email}]})
