@@ -2,14 +2,8 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 module.exports.authenticateUser = async function(req , res ,next){
-    let tokenHeader = req.headers.authorization;
-    if(!tokenHeader) return res.status(400).json({error : "token not provided"})
-    let token;
-    if (tokenHeader.startsWith("Bearer ")){
-        token = tokenHeader.substring(7, tokenHeader.length);
-   } else {
-      return res.status(400).json({error : "Wrong authorization header format"})
-   }
+    let token = req.cookies.accessToken;
+    if(!token) return res.status(400).json({error : "token not provided"})
    try{
        const tokenData = await jwt.verify(token , process.env.ACCESS_TOKEN_SECRET)
        try{

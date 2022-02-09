@@ -28,7 +28,7 @@ module.exports.loginUser = async function(req , res , next){
             },
             process.env.ACCESS_TOKEN_SECRET,
             {
-                expiresIn : 60
+                expiresIn : 1200  // 20 minutes
             }
         )
 
@@ -41,7 +41,17 @@ module.exports.loginUser = async function(req , res , next){
 
         try{
             await RefreshToken.create({token : refreshToken})
-            res.status(200).json({user : user , auth : {accessToken : accessToken , refreshToken : refreshToken}})
+            res.cookie("accessToken" , accessToken , {
+                expiresIn : 1000 * 60 * 20 ,   // 20 minutes
+                httpOnly : true,
+                sameSite : "strict"
+            })
+            res.cookie("refreshToken" , refreshToken , {
+                httpOnly : true,
+                sameSite : "strict",
+                path : '/api/auth'
+            })
+            res.status(200).json({user : user})
         }catch(error){
             next(error)
         }
@@ -51,14 +61,8 @@ module.exports.loginUser = async function(req , res , next){
 }
 
 module.exports.newToken = async function(req , res , next){
-    let tokenHeader = req.headers.authorization;
-    if(!tokenHeader) return res.status(400).json({error : "please include refreshToken in request header"})
-    let token;
-    if(tokenHeader.startsWith("Bearer ")){
-        token = tokenHeader.substring(7 , tokenHeader.length)
-    }else{
-        return res.status(400).json({error : "Wrong authorization header format"})
-    }
+    let token = req.cookies.refreshToken;
+    if(!token) return res.status(400).json({error : "please include refreshToken in cookie"})
     try{
         const dbToken = await RefreshToken.find({token : token});
         if(dbToken.length == 0) return res.status(403).json({error : {msg : "Invalid token" , isRefreshTokenError : true}})
@@ -70,10 +74,15 @@ module.exports.newToken = async function(req , res , next){
                 },
                 process.env.ACCESS_TOKEN_SECRET,
                 {
-                    expiresIn : 60
+                    expiresIn : 1200 // 20 minutes
                 }
             )
-            res.status(200).json({auth : {accessToken : newToken}})
+            res.cookie('accessToken' , newToken , {
+                httpOnly : true,
+                sameSite : 'strict',
+                expiresIn : 1000 * 60 * 20
+            })
+            res.status(200).json({msg : "Success"})
         }catch(error){
             res.status(403).json({error : {msg : "Invalid refresh token" , isRefreshTokenError : true}})
         }
@@ -83,17 +92,17 @@ module.exports.newToken = async function(req , res , next){
 }
 
 module.exports.logoutUser = async function(req , res , next){
-    let tokenHeader = req.headers.authorization;
-    let token;
-    if(tokenHeader.startsWith("Bearer ")){
-        token = tokenHeader.substring(7 , tokenHeader.length)
-    }else{
-        return res.status(400).json({error : "Wrong authorization header format"})
-    }
+    let token = req.cookies.refreshToken;
+    if(!token) return res.status(400).json({error : "refresh token not provided in cookie"})
     try{
         const dbToken = await RefreshToken.findOne({token : token})
         if(!dbToken) return res.status(404).json({error : "refreshToken not found in database"})
         await RefreshToken.findOneAndDelete({token : token})
+        res.clearCookie('refreshToken' , {
+            httpOnly : true,
+            sameSite : 'strict',
+            path : '/api/auth'
+        })
         res.status(200).json({msg : "User logged out"})
     }catch(err){
         next(err)

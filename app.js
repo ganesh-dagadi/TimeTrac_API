@@ -4,6 +4,7 @@ const cors = require('cors'),
       express = require('express'),
       {json, urlencoded} = express,
       mongoose = require('mongoose'),
+      cookieParser = require('cookie-parser'),
       errorHandler = require('./middleware/errorHandler')
 
 
@@ -19,6 +20,7 @@ app.use(cors(
 ))
 app.use(json())
 app.use(urlencoded({extended : false}));
+app.use(cookieParser());
 
 const authRoutes = require('./routes/auth');
 app.use('/api/auth' , authRoutes);
