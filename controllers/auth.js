@@ -19,7 +19,7 @@ module.exports.registerUser = async function(req, res , next){
 module.exports.loginUser = async function(req , res , next){
     const {password , username , email} = req.body;
     try{
-        let user = await User.find({$or : [{email : email} , {username : username}]});
+        let user = await User.find({username : username});
         user = user[0];
         if(!bcrypt.compareSync(password , user.password)) return res.status(400).json({error : "passwords dont match."})
         const accessToken = jwt.sign(
