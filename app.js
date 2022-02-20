@@ -5,7 +5,7 @@ const cors = require('cors'),
       {json, urlencoded} = express,
       mongoose = require('mongoose'),
       cookieParser = require('cookie-parser'),
-      errorHandler = require('./middleware/errorHandler')
+      errorHandler = require('./middleware/errorHandler');
 
 
 const app = express()
@@ -24,8 +24,8 @@ app.use(cookieParser());
 
 const authRoutes = require('./routes/auth');
 app.use('/api/auth' , authRoutes);
-const projectRoutes = require('./routes/project');
-app.use('/api/projects' , projectRoutes)
+const activityRoutes = require('./routes/activity');
+app.use('/api/activity' , activityRoutes)
 app.use(errorHandler);
 app.all('*' , (req , res)=>{
     res.status(404).json({error : "Resource not found"})

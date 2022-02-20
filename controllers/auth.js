@@ -92,16 +92,22 @@ module.exports.newToken = async function(req , res , next){
 }
 
 module.exports.logoutUser = async function(req , res , next){
-    let token = req.cookies.refreshToken;
-    if(!token) return res.status(400).json({error : "refresh token not provided in cookie"})
+    let refToken = req.cookies.refreshToken;
+    let accessToken = req.cookies.accessToken;
+    if(!refToken || !accessToken) return res.status(400).json({error : "tokens not provided in cookie"})
     try{
-        const dbToken = await RefreshToken.findOne({token : token})
+        const dbToken = await RefreshToken.findOne({token : refToken})
         if(!dbToken) return res.status(404).json({error : "refreshToken not found in database"})
-        await RefreshToken.findOneAndDelete({token : token})
+        await RefreshToken.findOneAndDelete({token : refToken})
         res.clearCookie('refreshToken' , {
             httpOnly : true,
             sameSite : 'strict',
             path : '/api/auth'
+        })
+        res.clearCookie('accessToken' , {
+            expiresIn : 1000 * 60 * 20 ,   // 20 minutes
+            httpOnly : true,
+            sameSite : "strict"
         })
         res.status(200).json({msg : "User logged out"})
     }catch(err){
