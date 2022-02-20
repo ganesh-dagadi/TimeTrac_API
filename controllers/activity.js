@@ -22,8 +22,8 @@ module.exports.getUserActivities = async function(req, res , next){
         for(let i = 0 ; i < user.activities.length ; i++){
             const activityData = await Activity.findById(user.activities[i]);
             activities.push(activityData);
-            return res.status(200).json({activities : activities});
         }
+        return res.status(200).json({activities : activities});
    }catch(err){
       next(err)
    }
