@@ -30,9 +30,9 @@ module.exports.validateCreateActivity = async function(req , res , next){
     if(!title) return res.status(403).json({error: "Title not provided"});
     try{
         let user = await User.findById(req.user._id).populate('activities');
-        user.activities.forEach(activity => {
-            if(activity.title == title) return res.status(409).json({error : "Activity already exists."});
-        });
+        for(let i = 0 ; i < user.activities.length ; i++){
+            if(user.activities[i].title == title) return res.status(409).json({error : "Activity already exists."})
+        }
         next()
     }catch(err){
         next(err)
