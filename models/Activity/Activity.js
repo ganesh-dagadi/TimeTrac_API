@@ -5,7 +5,8 @@ const activitySchema = new mongoose.Schema({
     color : {type : String, default : "blue"},
     logs  : [
         {type: mongoose.Schema.Types.ObjectId , ref : "Activitylogs"}
-    ]
+    ],
+    author : mongoose.Schema.Types.ObjectId
 })
 
 
