@@ -1,5 +1,4 @@
 const User = require('../models/User')
-const Activity = require('../models/Activity/Activity');
 
 module.exports.validateRegisterUser = async function(req , res , next){
     const {username , password} = req.body;
@@ -29,7 +28,7 @@ module.exports.validateCreateActivity = async function(req , res , next){
     const {title} = req.body;
     if(!title) return res.status(403).json({error: "Title not provided"});
     try{
-        let user = await User.findById(req.user._id).populate('activities');
+        let user = await User.findById(req.user._id);
         for(let i = 0 ; i < user.activities.length ; i++){
             if(user.activities[i].title == title) return res.status(409).json({error : "Activity already exists."})
         }
@@ -43,7 +42,7 @@ module.exports.validateCreateActivity = async function(req , res , next){
 module.exports.validateEditActivity = async function(req , res , next){
     const {title} = req.body;
     try{
-        let user = await User.findById(req.user._id).populate('activities');
+        let user = await User.findById(req.user._id);
         for(let i = 0 ; i < user.activities.length ; i++){
             if(user.activities[i].title == title) return res.status(409).json({error : "Activity already exists."})
         }
