@@ -25,8 +25,10 @@ app.use(cookieParser());
 const authRoutes = require('./routes/auth');
 app.use('/api/auth' , authRoutes);
 const activityRoutes = require('./routes/activity');
-app.use('/api/u/' , activityRoutes)
+app.use('/api/activity' , activityRoutes)
 app.use(errorHandler);
+const logRoutes = require('./routes/log');
+app.use('/api/logs' , logRoutes);
 app.all('*' , (req , res)=>{
     res.status(404).json({error : "Resource not found"})
 })
