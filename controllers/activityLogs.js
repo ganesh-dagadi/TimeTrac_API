@@ -1,10 +1,10 @@
 const ActivityLogs = require('../models/Activitylogs');
+const mongoose = require('mongoose')
 const User = require('../models/User')
 
 
 module.exports.createLog = async function(req , res , next){
-    try{
-        
+    try{  
         if(!req.body.repeatsOn){  // The log does not repeat
            let data = {
                title : req.body.title,
@@ -19,6 +19,9 @@ module.exports.createLog = async function(req , res , next){
                ]
            }
             const newLog = await ActivityLogs(data);
+            const user = await User.findById(req.user._id);
+            user.logs.push(newLog);
+            await user.save();
             return res.status(200).json({newLog : newLog});
         }else{
             const timeNow = new Date(req.body.startTime); 
@@ -58,7 +61,6 @@ module.exports.createLog = async function(req , res , next){
                     let nowTime = new Date(req.body.startTime);
                     for(let i = 0 ; i < dayDiffLong.length ; i++){
                         let nextTime = Date.parse(nowTime) + (86400000 * dayDiffLong[i]);
-                        console.log(nextTime)
                         nowTime = new Date(nextTime);
                         data.loglets.push(
                             {
@@ -69,6 +71,9 @@ module.exports.createLog = async function(req , res , next){
                         )
                     }
                     const newLog = await ActivityLogs.create(data);
+                    const user = await User.findById(req.user._id);
+                    user.logs.push(newLog);
+                    await user.save();
                     res.status(200).json({newLog : newLog})
         }
     }catch(err){
@@ -78,6 +83,10 @@ module.exports.createLog = async function(req , res , next){
 
 module.exports.getLogs = async function(req, res , next){
     let {duration , sort} = req.query;
+    console.log(req.user._id)
+    const logs = await ActivityLogs.aggregate([
+        {$match : {owner : req.user._id}},
+    ])
 }
 
 module.exports.getOneLog = async function(req, res ,next){
@@ -117,6 +126,13 @@ module.exports.deleteLog = async function(req, res ,next){
         const log = await ActivityLogs.findById(req.params.id);
         if(!req.user._id.equals(log.owner)) return res.status(403).json({error : "Unauthorized"});
         await ActivityLogs.findByIdAndDelete(req.params.id);
+        const user = await User.findById(req.user._id);
+        user.logs.forEach(function(log, index, logs) {
+            if(log.equals(req.params.id)){
+                logs.splice(index , 1);
+            }
+          });
+        await user.save();
         return res.status(200).json({msg : "Deleted succesfully"});
     }catch(err){
         next(err)
