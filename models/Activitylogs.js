@@ -1,13 +1,14 @@
 const mongoose = require('mongoose');
 
+const LogletSchema = new mongoose.Schema({
+    startTime : {type : Date},
+    duration : {type : Number , required : true},
+    isCompleted : {type : Boolean , default : false},
+})
 
 const ActivityLogSchema = new mongoose.Schema({
     title : String,
-    startTime : {type : Date , default : Date.now},
-    duration : {type : Number , required : true},
-    repeatsOn : [{type : String}],
-    numOfRepeats : Number,
-    isCompleted : {type : Boolean , default : false},
+    loglets : [LogletSchema],
     parentActivity : {type : mongoose.Schema.Types.ObjectId, required : true},
     owner : {type : mongoose.Schema.Types.ObjectId , required : true}
 })

@@ -56,6 +56,12 @@ module.exports.validateCreateLog = async function(req , res, next){
     try{
         const data = req.body;
         if(!data.duration) return res.status(403).json({error : "Duration not provided"});
+        if(data.repeatsOn && data.repeatsOn.length == 0) return res.status(403).json({error : "RepeatsOn is Empty"})
+
+        data.repeatsOn.forEach(element=>{
+            if(!(typeof element == 'number')) return res.status(403).json({error : "All elements in RepeatsOn must be numbers"})
+        })
+
         if(data.repeatsOn && data.repeatsOn.length !== 0 && !data.numOfRepeats ) return res.status(403).json({error : "Repeat data insufficient"});
         if(!data.parentActivity) return res.status(403).json({error : "Parent activity missing"});
         const user = await User.findById(req.user._id);
