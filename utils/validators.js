@@ -63,6 +63,10 @@ module.exports.validateCreateLog = async function(req , res, next){
         })
 
         if(data.repeatsOn && data.repeatsOn.length !== 0 && !data.numOfRepeats ) return res.status(403).json({error : "Repeat data insufficient"});
+        if(!data.startTime) return res.status(403).json({error : "StartTime absent"});
+
+        const startDay = new Date(data.startTime);
+        if(!data.repeatsOn.includes(startDay.getDay())) return res.status(403).json({error : "Start time's day not in repeatsOn"});
         if(!data.parentActivity) return res.status(403).json({error : "Parent activity missing"});
         const user = await User.findById(req.user._id);
         if(user.activities.id(data.parentActivity) == null) return res.status(403).json({error : "parent activity not found"})

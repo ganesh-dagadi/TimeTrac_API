@@ -12,7 +12,7 @@ module.exports.createLog = async function(req , res , next){
                owner : req.user._id,
                loglets : [
                    {
-                       startTime : req.body.startTime ? req.body.startTime : Date.now(),
+                       startTime : req.body.startTime,
                        duration : req.body.duration,
                        isCompleted : false
                    }
@@ -21,9 +21,9 @@ module.exports.createLog = async function(req , res , next){
             const newLog = await ActivityLogs(data);
             return res.status(200).json({newLog : newLog});
         }else{
-            const timeNow = new Date(Date.now()); 
+            const timeNow = new Date(req.body.startTime); 
             const today = timeNow.getDay();  // Sunday - Saturday (0 - 6)
-            if(req.body.repeatsOn.includes(today)){
+           
                 let todayIndex = req.body.repeatsOn.indexOf(today);
                 let dayDiff = []; // array containing number of days between repeat days.
                 for(let i = 0 ; i < req.body.repeatsOn.length ; i++){
@@ -48,17 +48,18 @@ module.exports.createLog = async function(req , res , next){
                         owner : req.user._id,
                         loglets : [
                             {
-                                startTime : req.body.startTime ? req.body.startTime : Date.now(),
+                                startTime : req.body.startTime,
                                 duration : req.body.duration,
                                 isCompleted : false
                             }
                         ]
                     }
 
-                    let nowTime = Date.now();
+                    let nowTime = new Date(req.body.startTime);
                     for(let i = 0 ; i < dayDiffLong.length ; i++){
-                        let nextTime = nowTime + (86400000 * dayDiffLong[i]);
-                        nowTime = nextTime;
+                        let nextTime = Date.parse(nowTime) + (86400000 * dayDiffLong[i]);
+                        console.log(nextTime)
+                        nowTime = new Date(nextTime);
                         data.loglets.push(
                             {
                                 startTime : nextTime,
@@ -67,12 +68,8 @@ module.exports.createLog = async function(req , res , next){
                             }
                         )
                     }
-                    
                     const newLog = await ActivityLogs.create(data);
                     res.status(200).json({newLog : newLog})
-            }else{
-
-            }
         }
     }catch(err){
         next(err)
