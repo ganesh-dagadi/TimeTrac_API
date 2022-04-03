@@ -12,7 +12,7 @@ const UserSchema  = new mongoose.Schema({
     profileImg : String,
     isUserActive : {type : Boolean , default : true},
     activities : [activitySchema],
-    logs : [{type : mongoose.Schema.Types.ObjectId , ref : 'Activitylogs' }]
+    logs : [{type : mongoose.Schema.Types.ObjectId , ref : 'Activitylog' }]
 })
 
 module.exports = mongoose.model('user' , UserSchema);

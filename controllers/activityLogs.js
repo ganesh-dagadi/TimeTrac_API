@@ -82,11 +82,102 @@ module.exports.createLog = async function(req , res , next){
 }
 
 module.exports.getLogs = async function(req, res , next){
-    let {duration , sort} = req.query;
-    console.log(req.user._id)
-    const logs = await ActivityLogs.aggregate([
-        {$match : {owner : req.user._id}},
-    ])
+
+    try{
+        let {duration} = req.query;
+   
+        User.findById(req.user._id).populate('logs').exec(function(err , user){
+            if(err) return next(err);
+            let logs = user.logs;
+            const resLogs = [];
+
+            if(duration == "1d"){
+                let todayStart = new Date();
+                todayStart.setHours(0 ,0 , 0 ,0);
+                const todayEnd = new Date();
+                todayEnd.setHours(23 , 59 , 59 , 999);
+                logs.forEach(log=>{
+                    log.loglets.forEach(loglet=>{
+                        if(Date.parse(loglet.startTime) >= todayStart && Date.parse(loglet.startTime) <= todayEnd){
+                            const logletobj = {
+                                title : log.title,
+                                parentActivity : log.parentActivity,
+                                parentLog : log._id,
+                                log : loglet
+                            }
+                            resLogs.push(logletobj)
+                        }
+                    })
+                })
+            }else if (duration == '7d'){
+                let start = Date.now() - (7 * 86400000);
+                logs.forEach(log=>{
+                    log.loglets.forEach(loglet=>{
+                        if(Date.parse(loglet.startTime) >= start && Date.parse(loglet.startTime) <= Date.now()){
+                            const logletobj = {
+                                title : log.title,
+                                parentActivity : log.parentActivity,
+                                parentLog : log._id,
+                                log : loglet
+                            }
+                            resLogs.push(logletobj)
+                        }
+                    })
+                })
+            }else if(duration == '1m'){
+                let start = Date.now() - (30 * 86400000);
+                logs.forEach(log=>{
+                    log.loglets.forEach(loglet=>{
+                        if(Date.parse(loglet.startTime) >= start && Date.parse(loglet.startTime) <= Date.now()){
+                            const logletobj = {
+                                title : log.title,
+                                parentActivity : log.parentActivity,
+                                parentLog : log._id,
+                                log : loglet
+                            }
+                            resLogs.push(logletobj)
+                        }
+                    })
+                })
+            }else if(duration == '6m'){
+                let start = Date.now() - (180 * 86400000);
+                logs.forEach(log=>{
+                    log.loglets.forEach(loglet=>{
+                        if(Date.parse(loglet.startTime) >= start && Date.parse(loglet.startTime) <= Date.now()){
+                            const logletobj = {
+                                title : log.title,
+                                parentActivity : log.parentActivity,
+                                parentLog : log._id,
+                                log : loglet
+                            }
+                            resLogs.push(logletobj)
+                        }
+                    })
+                })
+            }else if(duration == '1y'){
+                let start = Date.now() - (365 * 86400000);
+                logs.forEach(log=>{
+                    log.loglets.forEach(loglet=>{
+                        if(Date.parse(loglet.startTime) >= start && Date.parse(loglet.startTime) <= Date.now()){
+                            const logletobj = {
+                                title : log.title,
+                                parentActivity : log.parentActivity,
+                                parentLog : log._id,
+                                log : loglet
+                            }
+                            resLogs.push(logletobj)
+                        }
+                    })
+                })
+            }else{
+                return res.status(403).json({error : "Invalid duration"})
+            }
+
+            return res.status(200).json(resLogs);
+        })
+    }catch(err){
+        next(err)
+    }
 }
 
 module.exports.getOneLog = async function(req, res ,next){
@@ -100,9 +191,11 @@ module.exports.getOneLog = async function(req, res ,next){
 
 module.exports.markLogComplete = async function(req, res , next){
     try{
-        const log = await ActivityLogs.findById(req.params.id);
+        let {loglet_id , log_id} = req.params;
+        const log = await ActivityLogs.findById(log_id);
+        if(!log) return res.status(404).json({error : "Log not found"})
         if(!req.user._id.equals(log.owner)) return res.status(403).json({error : "Unauthorized"});
-        log.isCompleted = true;
+        log.loglets.id(loglet_id).isCompleted = true;
         await log.save();
         return res.status(200).json({msg : "Marked complete"});
     }catch(err){
@@ -115,6 +208,7 @@ module.exports.editLog = async function(req , res , next){
         const log = await ActivityLogs.findById(req.params.id);
         if(!req.user._id.equals(log.owner)) return res.status(403).json({error : "Unauthorized"});
         const updatedLog = ActivityLogs.findByIdAndUpdate(req.params.id , req.body);
+        console.log('here')
         return res.status(200).json({updatedLog : updatedLog});
     }catch(err){
         next(err)

@@ -13,4 +13,4 @@ const ActivityLogSchema = new mongoose.Schema({
     owner : {type : mongoose.Schema.Types.ObjectId , required : true}
 })
 
-module.exports = mongoose.model('activitylog' , ActivityLogSchema);
+module.exports = mongoose.model('Activitylog' , ActivityLogSchema);

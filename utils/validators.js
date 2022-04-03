@@ -76,3 +76,8 @@ module.exports.validateCreateLog = async function(req , res, next){
     }
     
 }
+
+module.exports.validateEditLog = async function(req , res , next){
+    if(!req.body.title) return res.status(403).json({error : "Atleast title has to be provided"})
+    next()
+}

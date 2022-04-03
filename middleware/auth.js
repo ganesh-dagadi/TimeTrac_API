@@ -10,6 +10,7 @@ module.exports.authenticateUser = async function(req , res ,next){
         const user = await User.findById(tokenData.user_id);
         if(!user) return res.status(404).json({error : "User not found"});
         req.user = user
+       
         next()
        }catch(error){
         next(error)
