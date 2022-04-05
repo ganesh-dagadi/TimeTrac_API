@@ -1,16 +1,16 @@
 # What is Time trac?
 
-* Time trac is an application which allows users to track their time and see how much time has been spent on each activity they do everyday. 
+* Time trac is an application that allows users to track their time and analyse the time spent on every activity. 
 
-* For example, A user can track how much time they spent Sleeping, Studying, Learning new skills etc.
+* For example, A user can track the time they spend on activities like Sleeping, Studying, Learning new skills etc.
 
 * The user can plan their days ahead using logs which are instances of activities.
 
 * Once the user completes a log, they can mark it complete and if they miss it, The system automatically marks the log as missed. 
 
-* The user can also look at the analytics where they can see how much time they spent on every activity, and how much percentage of logs they missed through beautiful visual graphs.
+* The user can also look at the analytics where they can see the time they spent on every activity, and what percentage of logs they missed.
 
-* The user can view the analytics on a range of duration like 1 day , 7 days , 1 month , 6 months , 1 year etc..
+* The user can view the analytics on a range of durations like 1 day , 7 days , 1 month , 6 months , 1 year etc..
 
 For visual Representation of Time trac, View the prototype here.
 https://www.figma.com/proto/yhB8F70Hglbfgb7GxIOezM/Time-Trac-v1?node-id=0%3A1
