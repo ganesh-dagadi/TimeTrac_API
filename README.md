@@ -35,6 +35,7 @@ https://www.figma.com/proto/yhB8F70Hglbfgb7GxIOezM/Time-Trac-v1?node-id=0%3A1
 * `Models` folder containes all the Data models
 * `Controllers` folder contain all the methods which contain the server side logic that is called when it's endpoint is called.
 * `Routes` folder contains the beginning of the endpoint from where middleware and controller methods are called as required. 
+* `validators` in `/utils` contain the validation methods to ensure the client's request contains the required data.
 
 ## Endpoints Documentation 
 
